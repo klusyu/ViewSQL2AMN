@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ASCII"?>
+<r2RML:Mapping xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:r2RML="http://www.xtext.org/example/mydsl/R2RML">
+  <statements>
+    <prefix prefixName="rr:" uri="&lt;http://www.w3.org/ns/r2rml#>"/>
+  </statements>
+  <statements>
+    <prefix prefixName="ex:" uri="&lt;http://example.org/>"/>
+  </statements>
+  <statements>
+    <prefix prefixName="xsd:" uri="&lt;http://www.w3.org/2001/XMLSchema#>"/>
+  </statements>
+  <statements>
+    <triplesMap name="&lt;#TriplesMap1>">
+      <logicalTable>
+        <query tableName="tbl_patient">
+          <selectedColumns>
+            <columns>patientid</columns>
+            <columns>name</columns>
+          </selectedColumns>
+        </query>
+      </logicalTable>
+      <subjectMap>
+        <template name="&quot;inst:ds1/{patientid}&quot;"/>
+        <class>
+          <className prefixName="ex:" name="Patient"/>
+        </class>
+      </subjectMap>
+      <predicateObjectMaps>
+        <predicate>
+          <predicateName prefixName="ex:" name="hasName"/>
+        </predicate>
+        <objectMap>
+          <column name="&quot;name&quot;"/>
+          <datatype>
+            <dtName prefixName="xsd:" name="string"/>
+          </datatype>
+        </objectMap>
+      </predicateObjectMaps>
+    </triplesMap>
+  </statements>
+  <statements>
+    <triplesMap name="&lt;#TriplesMap2>">
+      <logicalTable>
+        <query tableName="tbl_patient">
+          <selectedColumns>
+            <columns>patientid</columns>
+          </selectedColumns>
+        </query>
+      </logicalTable>
+      <subjectMap>
+        <template name="&quot;inst:ds1/{patientid}&quot;"/>
+      </subjectMap>
+      <predicateObjectMaps>
+        <predicate>
+          <predicateName prefixName="ex:" name="hasNeoplasm"/>
+        </predicate>
+        <objectMap>
+          <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        </objectMap>
+      </predicateObjectMaps>
+    </triplesMap>
+  </statements>
+  <statements>
+    <triplesMap name="&lt;#TriplesMap3>">
+      <logicalTable>
+        <query tableName="tbl_patient">
+          <selectedColumns>
+            <columns>patientid</columns>
+          </selectedColumns>
+          <whereClause>
+            <conditions column="type" operator="=">
+              <value xsi:type="r2RML:BooleanValue" value="false"/>
+            </conditions>
+          </whereClause>
+        </query>
+      </logicalTable>
+      <subjectMap>
+        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        <class>
+          <className prefixName="ex:" name="NSCLC"/>
+        </class>
+      </subjectMap>
+    </triplesMap>
+  </statements>
+  <statements>
+    <triplesMap name="&lt;#TriplesMap4>">
+      <logicalTable>
+        <query tableName="tbl_patient">
+          <selectedColumns>
+            <columns>patientid</columns>
+          </selectedColumns>
+          <whereClause>
+            <conditions column="type" operator="=">
+              <value xsi:type="r2RML:BooleanValue" value="true"/>
+            </conditions>
+          </whereClause>
+        </query>
+      </logicalTable>
+      <subjectMap>
+        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        <class>
+          <className prefixName="ex:" name="SCLC"/>
+        </class>
+      </subjectMap>
+    </triplesMap>
+  </statements>
+  <statements>
+    <triplesMap name="&lt;#TriplesMap5>">
+      <logicalTable>
+        <query tableName="tbl_patient">
+          <selectedColumns>
+            <columns>patientid</columns>
+          </selectedColumns>
+          <whereClause>
+            <conditions column="stage" operator="=">
+              <value xsi:type="r2RML:NumberValue" value="4"/>
+            </conditions>
+            <conditions column="type" operator="=">
+              <value xsi:type="r2RML:BooleanValue" value="false"/>
+            </conditions>
+            <logic>AND</logic>
+          </whereClause>
+        </query>
+      </logicalTable>
+      <subjectMap>
+        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+      </subjectMap>
+      <predicateObjectMaps>
+        <predicate>
+          <predicateName prefixName="ex:" name="hasStage"/>
+        </predicate>
+        <objectMap>
+          <constant constStr="&quot;inst:stage-IIIa&quot;"/>
+        </objectMap>
+      </predicateObjectMaps>
+    </triplesMap>
+  </statements>
+</r2RML:Mapping>

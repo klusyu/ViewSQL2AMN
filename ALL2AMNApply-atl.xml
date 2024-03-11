@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="default">
+	
+	<target name="default" depends="modelsLoading">
+		
+		<atl.launch path="./transformation/rdf2amn.atl">
+			<inModel name="IN1" model="sql_in" />
+			<inModel name="IN2" model="r2rml_in" />
+			<outModel name="OUT" model="patient.amn" metamodel="AMN" />
+		</atl.launch>
+
+		<atl.saveModel model="hospital.amn" path="./hospital-amn.xmi" />
+		
+		
+		<atl.launch  path="./transformation/AMN2Text.asm">
+			<inmodel name="IN" model="patient.amn"/>			
+			<library name="ATL2String" path="./transformation/AMN2String.asm"/>
+		</atl.launch>	
+
+	</target>
+
+	<target name="modelsLoading">
+		<atl.loadModel modelHandler="EMF" name="AMN" metamodel="MOF" path="./metamodel/AMN.ecore" />
+		<atl.loadModel modelHandler="EMF" name="SQL" metamodel="MOF" path="./metamodel/SQL.ecore" />
+		<atl.loadModel modelHandler="EMF" name="R2RML" metamodel="MOF" path="./metamodel/R2RML.ecore" />
+		<atl.loadModel modelHandler="EMF" name="sql_in" metamodel="SQL" path="./sql_input.xmi" />
+		<atl.loadModel modelHandler="EMF" name="r2rml_in" metamodel="R2RML" path="./r2rml_input.xmi" />
+	</target>
+
+</project>

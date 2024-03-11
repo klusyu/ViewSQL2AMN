@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<sQL:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sQL="http://www.xtext.org/example/simple_sql/SQL">
+  <statements xsi:type="sQL:CreateTableStatement" tableName="tbl_patient">
+    <columns columnName="patientid">
+      <columnType/>
+      <constraints>NOT NULL</constraints>
+      <constraints>PRIMARY KEY</constraints>
+    </columns>
+    <columns columnName="name">
+      <columnType length="40"/>
+      <constraints>NOT NULL</constraints>
+    </columns>
+    <columns columnName="type">
+      <columnType/>
+      <constraints>NOT NULL</constraints>
+    </columns>
+    <columns columnName="stage">
+      <columnType/>
+      <constraints>NOT NULL</constraints>
+    </columns>
+  </statements>
+  <statements xsi:type="sQL:SelectStatement" tableName="tbl_patient">
+    <selectedColumns>
+      <columns>name</columns>
+    </selectedColumns>
+    <whereClause>
+      <expression xsi:type="sQL:AndExpression">
+        <left xsi:type="sQL:Comparison" column="stage" operator="=">
+          <value xsi:type="sQL:NumberValue" value="4"/>
+        </left>
+        <right xsi:type="sQL:Comparison" column="type" operator="=">
+          <value xsi:type="sQL:BooleanValue" value="false"/>
+        </right>
+      </expression>
+    </whereClause>
+  </statements>
+</sQL:Model>

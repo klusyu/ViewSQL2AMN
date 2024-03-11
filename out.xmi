@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amn="http://synthesis.ipi.ac.ru/amn/" xmlns:amn-exp="http://synthesis.ipi.ac.ru/amn/expression" xmlns:amn-pred="http://synthesis.ipi.ac.ru/amn/predicate">
+  <amn:AbstractMachine name="test"/>
+  <amn:AbstractMachine name="ContextRDF"/>
+  <amn:Refinement name="Patients" sees="/1" refines="Hospital">
+    <properties xsi:type="amn-pred:Conjunction">
+      <predicate xsi:type="amn-pred:AtomicPredicate" sign="&amp;">
+        <expression xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:NamedConstant" name="personIRI"/>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=">->">
+            <expression xsi:type="amn-exp:NamedConstant" name="1..NN"/>
+            <expression xsi:type="amn-exp:NamedConstant" name="IRI"/>
+          </expression>
+        </expression>
+        <expression xsi:type="amn-pred:AtomicPredicate" sign="&lt;:">
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="ran">
+            <expression xsi:type="amn-exp:Variable" name="personIRI"/>
+          </expression>
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="dom">
+            <expression xsi:type="amn-exp:Variable" name="IS_IR"/>
+          </expression>
+        </expression>
+      </predicate>
+      <predicate xsi:type="amn-pred:AtomicPredicate" sign="&amp;">
+        <expression xsi:type="amn-pred:AtomicPredicate" sign=":">
+          <expression xsi:type="amn-exp:NamedConstant" name="neoplasmIRI"/>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=">->">
+            <expression xsi:type="amn-exp:NamedConstant" name="1..NN"/>
+            <expression xsi:type="amn-exp:NamedConstant" name="IRI"/>
+          </expression>
+        </expression>
+        <expression xsi:type="amn-pred:AtomicPredicate" sign="&lt;:">
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="ran">
+            <expression xsi:type="amn-exp:Variable" name="neoplasmIRI"/>
+          </expression>
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="dom">
+            <expression xsi:type="amn-exp:Variable" name="IS_IR"/>
+          </expression>
+        </expression>
+      </predicate>
+    </properties>
+    <definitions name="STRING_TYPE" type="seq(0..255)"/>
+    <abstractConstants>personIRI</abstractConstants>
+    <abstractConstants>neoplasmIRI</abstractConstants>
+  </amn:Refinement>
+  <amn:AbstractMachine name="ContextRDF"/>
+  <amn:AbstractMachine name="View2AMN"/>
+</xmi:XMI>

@@ -1,0 +1,139 @@
+module ViewSQL2AMN;
+create OUT: AMN from IN1: SQL, IN2: R2RML;
+
+rule ViewSQL2AMN{
+	from
+		sql: SQL!Model
+	to
+		amn: AMN!AbstractMachine(
+			name <- 'test'	
+		)
+}
+
+rule createTable2AMN{
+	from 
+		createTable: SQL!CreateTableStatement
+	using {
+		refName:String = 'Patients';
+	}
+	to 
+		--- SEES
+		ctxt: AMN!AbstractMachine(
+			name <- 'ContextRDF'
+		),
+		ref: AMN!Refinement(
+			name <- 'Patients',
+			refines <- 'Hospital',
+			sees <- ctxt,
+			definitions <- defin,
+			abstractConstants <- 'personIRI',
+			abstractConstants <- 'neoplasmIRI',
+			properties <- thisModule.initProperties(ref.abstractConstants)
+		),
+		--- REFINES
+		
+		--- SETS
+
+		--- DEFINITIONS
+		defin: AMN!Definition(
+			name <- 'STRING_TYPE',
+			type <- 'seq(0..255)'
+		)
+		--- PROPERTIES
+
+		--- INVARIANT
+		
+		--- Initialization
+	do {
+		thisModule.View2AMN(R2RML!Mapping.allInstances()->first());
+		thisModule.debug('CreateTableStatement');
+	}
+}
+
+-- personIRI: 1..NN  >-> IRI & ran(personIRI) <: dom(IS_IR) &
+-- neoplasmIRI: 1..NN >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
+-- ran(personIRI) /\ ran(neoplasmIRI) = {}
+rule initProperties(ac: Sequence(String)) {
+	to
+		conjProperties: AMN!Conjunction(
+			predicate <- ac->collect(p|thisModule.propertyDefine(p))
+		)
+	do {
+		conjProperties;
+	}
+}
+
+rule propertyDefine(property: String) {
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- '&',
+			expression <- Sequence{leftExp, rightExp}	
+		),
+		leftExp: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{acConst, lRight}
+		),
+		acConst: AMN!NamedConstant(
+			name <- property	
+		),
+		lRight: AMN!AtomicPredicate(
+			sign <- '>->',
+			expression <- Sequence{lrlConst, lrrConst}
+		),
+		lrlConst: AMN!NamedConstant(
+			name <- '1..NN'
+		),
+		lrrConst: AMN!NamedConstant(
+			name <- 'IRI'
+		),
+		rightExp: AMN!AtomicPredicate(
+			sign <- '<:',
+			expression <- Sequence{rRan, rDom}
+		),
+		rRan: AMN!FunctionalExpression(
+			sign <- 'ran',
+			expression <- rRanVar
+		),
+		rRanVar: AMN!Variable(name <- property),
+		rDom: AMN!FunctionalExpression(
+			sign <- 'dom',
+			expression <- rDomVar
+		),
+		rDomVar: AMN!Variable(name <- 'IS_IR')
+	do {
+		ap;	
+	}
+}
+
+rule select2AMN{
+	from 
+		select: SQL!SelectStatement
+	to 
+		--- SEES
+		ctxt: AMN!AbstractMachine(
+			name <- 'ContextRDF'
+		)
+	do {
+		thisModule.debug('SelectStatement');
+	}
+}
+
+rule View2AMN(mapping: R2RML!Mapping){
+	to 
+		--- SEES
+		ctxt: AMN!AbstractMachine(
+			name <- 'View2AMN'
+		)
+	do {
+		
+		for (st in mapping.statements) {
+			if (not st.prefix.oclIsUndefined()) {
+				thisModule.debug(st.prefix.prefixName);
+			}
+			if (not st.triplesMap.oclIsUndefined()) {
+				thisModule.debug(st.triplesMap.name);
+			}
+		}
+		thisModule.debug('View2AMN');
+	}
+}
