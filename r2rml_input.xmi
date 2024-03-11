@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="ASCII"?>
 <r2RML:Mapping xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:r2RML="http://www.xtext.org/example/mydsl/R2RML">
   <statements>
-    <prefix prefixName="rr:" uri="&lt;http://www.w3.org/ns/r2rml#>"/>
+    <prefix prefixName="rr:" uri="http://www.w3.org/ns/r2rml#>"/>
   </statements>
   <statements>
-    <prefix prefixName="ex:" uri="&lt;http://example.org/>"/>
+    <prefix prefixName="ex:" uri="http://example.org/>"/>
   </statements>
   <statements>
-    <prefix prefixName="xsd:" uri="&lt;http://www.w3.org/2001/XMLSchema#>"/>
+    <prefix prefixName="xsd:" uri="http://www.w3.org/2001/XMLSchema#>"/>
   </statements>
   <statements>
-    <triplesMap name="&lt;#TriplesMap1>">
+    <triplesMap name="#TriplesMap1">
       <logicalTable>
         <query tableName="tbl_patient">
           <selectedColumns>
@@ -20,7 +20,7 @@
         </query>
       </logicalTable>
       <subjectMap>
-        <template name="&quot;inst:ds1/{patientid}&quot;"/>
+        <template name="inst:ds1/{patientid}"/>
         <class>
           <className prefixName="ex:" name="Patient"/>
         </class>
@@ -30,7 +30,7 @@
           <predicateName prefixName="ex:" name="hasName"/>
         </predicate>
         <objectMap>
-          <column name="&quot;name&quot;"/>
+          <column name="name"/>
           <datatype>
             <dtName prefixName="xsd:" name="string"/>
           </datatype>
@@ -39,7 +39,7 @@
     </triplesMap>
   </statements>
   <statements>
-    <triplesMap name="&lt;#TriplesMap2>">
+    <triplesMap name="#TriplesMap2">
       <logicalTable>
         <query tableName="tbl_patient">
           <selectedColumns>
@@ -48,20 +48,23 @@
         </query>
       </logicalTable>
       <subjectMap>
-        <template name="&quot;inst:ds1/{patientid}&quot;"/>
+        <template name="inst:ds1/{patientid}"/>
+        <class>
+          <className prefixName="ex:" name="Patient"/>
+        </class>
       </subjectMap>
       <predicateObjectMaps>
         <predicate>
           <predicateName prefixName="ex:" name="hasNeoplasm"/>
         </predicate>
         <objectMap>
-          <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+          <template name="inst:ds1/neoplasm/{patientid}"/>
         </objectMap>
       </predicateObjectMaps>
     </triplesMap>
   </statements>
   <statements>
-    <triplesMap name="&lt;#TriplesMap3>">
+    <triplesMap name="#TriplesMap3">
       <logicalTable>
         <query tableName="tbl_patient">
           <selectedColumns>
@@ -75,7 +78,7 @@
         </query>
       </logicalTable>
       <subjectMap>
-        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        <template name="inst:ds1/neoplasm/{patientid}"/>
         <class>
           <className prefixName="ex:" name="NSCLC"/>
         </class>
@@ -83,7 +86,7 @@
     </triplesMap>
   </statements>
   <statements>
-    <triplesMap name="&lt;#TriplesMap4>">
+    <triplesMap name="#TriplesMap4">
       <logicalTable>
         <query tableName="tbl_patient">
           <selectedColumns>
@@ -97,7 +100,7 @@
         </query>
       </logicalTable>
       <subjectMap>
-        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        <template name="inst:ds1/neoplasm/{patientid}"/>
         <class>
           <className prefixName="ex:" name="SCLC"/>
         </class>
@@ -105,7 +108,7 @@
     </triplesMap>
   </statements>
   <statements>
-    <triplesMap name="&lt;#TriplesMap5>">
+    <triplesMap name="#TriplesMap5">
       <logicalTable>
         <query tableName="tbl_patient">
           <selectedColumns>
@@ -123,14 +126,17 @@
         </query>
       </logicalTable>
       <subjectMap>
-        <template name="&quot;inst:ds1/neoplasm/{patientid}&quot;"/>
+        <template name="inst:ds1/neoplasm/{patientid}"/>
+        <class>
+          <className prefixName="ex:" name="NSCLC"/>
+        </class>
       </subjectMap>
       <predicateObjectMaps>
         <predicate>
           <predicateName prefixName="ex:" name="hasStage"/>
         </predicate>
         <objectMap>
-          <constant constStr="&quot;inst:stage-IIIa&quot;"/>
+          <constant constStr="inst:stage-IIIa"/>
         </objectMap>
       </predicateObjectMaps>
     </triplesMap>

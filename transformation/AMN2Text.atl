@@ -1,8 +1,8 @@
 query 
 	AMN2Text = 
 		AMN!AbstractMachine.allInstances()->
-			collect(c| c.toString().writeTo('D:/eclipse-modeling-2023-09-R-win32-x86_64/atl_workspace/RDF2AMN/output/'+ c.name + '.mch'))->
+			collect(c| c.toString().writeTo('D:/eclipse-modeling-2023-09-R-win32-x86_64/atl_workspace/ViewSQL2AMN/output/'+ c.name + '.mch'))->
 			union(AMN!Refinement.allInstances()->
-				collect(c| c.toString().writeTo('D:/eclipse-modeling-2023-09-R-win32-x86_64/atl_workspace/RDF2AMN/output/'+ c.name + '.ref')))
+				collect(c| c.toString().writeTo('D:/eclipse-modeling-2023-09-R-win32-x86_64/atl_workspace/ViewSQL2AMN/output/'+ c.name + '.ref')))
 	;
 uses AMN2String;

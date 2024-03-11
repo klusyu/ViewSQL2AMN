@@ -1,8 +1,373 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amn="http://synthesis.ipi.ac.ru/amn/" xmlns:amn-exp="http://synthesis.ipi.ac.ru/amn/expression" xmlns:amn-pred="http://synthesis.ipi.ac.ru/amn/predicate">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amn="http://synthesis.ipi.ac.ru/amn/" xmlns:amn-exp="http://synthesis.ipi.ac.ru/amn/expression" xmlns:amn-pred="http://synthesis.ipi.ac.ru/amn/predicate" xmlns:amn-subst="http://synthesis.ipi.ac.ru/amn/substitution">
   <amn:AbstractMachine name="test"/>
   <amn:AbstractMachine name="ContextRDF"/>
   <amn:Refinement name="Patients" sees="/1" refines="Hospital">
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=":">
+      <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+      <expression xsi:type="amn-exp:FunctionalExpression" sign="POW">
+        <expression xsi:type="amn-exp:StructType">
+          <element name="patientid" type="/4"/>
+          <element name="name" type="/5"/>
+          <element name="type" type="/6"/>
+          <element name="stage" type="/7"/>
+        </expression>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BinaryOperator" sign=",">
+          <expression xsi:type="amn-exp:Variable" name="pt1"/>
+          <expression xsi:type="amn-exp:Variable" name="pt2"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:Conjunction">
+          <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+            <expression xsi:type="amn-exp:Variable" name="pt1"/>
+            <expression xsi:type="amn-exp:Variable" name="patientid"/>
+          </predicate>
+          <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+            <expression xsi:type="amn-exp:Variable" name="pt2"/>
+            <expression xsi:type="amn-exp:Variable" name="patientid"/>
+          </predicate>
+          <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+            <expression xsi:type="amn-pred:AtomicPredicate" sign="/=">
+              <expression xsi:type="amn-exp:Variable" name="pt1"/>
+              <expression xsi:type="amn-exp:Variable" name="pt2"/>
+            </expression>
+            <expression xsi:type="amn-pred:AtomicPredicate" sign="/=">
+              <expression xsi:type="amn-exp:Variable" name="pt1'patientid"/>
+              <expression xsi:type="amn-exp:Variable" name="pt2'patientid"/>
+            </expression>
+          </predicate>
+        </predicate>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BracketedExpression">
+          <expression xsi:type="amn-exp:Variable" name="patient"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+          <expression xsi:type="amn-pred:Conjunction">
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+              <expression xsi:type="amn-exp:Variable" name="patient"/>
+              <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+            </predicate>
+          </expression>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=".">
+            <expression xsi:type="amn-exp:FunctionalExpression" sign="#">
+              <expression xsi:type="amn-exp:BinaryOperator" sign="," noBracket="true">
+                <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+              </expression>
+            </expression>
+            <expression xsi:type="amn-pred:Bracketed">
+              <predicate xsi:type="amn-pred:Conjunction">
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="Patient"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="personIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                    <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                    <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                  </expression>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IEXT_string_Range">
+                    <expression xsi:type="amn-exp:Variable" name="hasName"/>
+                  </expression>
+                </predicate>
+              </predicate>
+            </expression>
+          </expression>
+        </predicate>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BracketedExpression">
+          <expression xsi:type="amn-exp:Variable" name="patient"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+          <expression xsi:type="amn-pred:Conjunction">
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+              <expression xsi:type="amn-exp:Variable" name="patient"/>
+              <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+            </predicate>
+          </expression>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=".">
+            <expression xsi:type="amn-exp:FunctionalExpression" sign="#">
+              <expression xsi:type="amn-exp:BinaryOperator" sign="," noBracket="true">
+                <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+              </expression>
+            </expression>
+            <expression xsi:type="amn-pred:Bracketed">
+              <predicate xsi:type="amn-pred:Conjunction">
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="Patient"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="personIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="Neoplasm"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="neoplasmIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                    <expression xsi:type="amn-exp:Variable" name="patientInd"/>
+                    <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                  </expression>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IEXT">
+                    <expression xsi:type="amn-exp:Variable" name="hasNeoplasm"/>
+                  </expression>
+                </predicate>
+              </predicate>
+            </expression>
+          </expression>
+        </predicate>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BracketedExpression">
+          <expression xsi:type="amn-exp:Variable" name="patient"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+          <expression xsi:type="amn-pred:Conjunction">
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+              <expression xsi:type="amn-exp:Variable" name="patient"/>
+              <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+            </predicate>
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+              <expression xsi:type="amn-pred:AtomicPredicate" sign="'">
+                <expression xsi:type="amn-exp:Variable" name="patient"/>
+                <expression xsi:type="amn-exp:Variable" name="type"/>
+              </expression>
+              <expression xsi:type="amn-exp:Variable" name="false"/>
+            </predicate>
+          </expression>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=".">
+            <expression xsi:type="amn-exp:FunctionalExpression" sign="#">
+              <expression xsi:type="amn-exp:BinaryOperator" sign="," noBracket="true">
+                <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+              </expression>
+            </expression>
+            <expression xsi:type="amn-pred:Bracketed">
+              <predicate xsi:type="amn-pred:Conjunction">
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="NSCLC"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="personIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                </predicate>
+              </predicate>
+            </expression>
+          </expression>
+        </predicate>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BracketedExpression">
+          <expression xsi:type="amn-exp:Variable" name="patient"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+          <expression xsi:type="amn-pred:Conjunction">
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+              <expression xsi:type="amn-exp:Variable" name="patient"/>
+              <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+            </predicate>
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+              <expression xsi:type="amn-pred:AtomicPredicate" sign="'">
+                <expression xsi:type="amn-exp:Variable" name="patient"/>
+                <expression xsi:type="amn-exp:Variable" name="type"/>
+              </expression>
+              <expression xsi:type="amn-exp:Variable" name="true"/>
+            </predicate>
+          </expression>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=".">
+            <expression xsi:type="amn-exp:FunctionalExpression" sign="#">
+              <expression xsi:type="amn-exp:BinaryOperator" sign="," noBracket="true">
+                <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+              </expression>
+            </expression>
+            <expression xsi:type="amn-pred:Bracketed">
+              <predicate xsi:type="amn-pred:Conjunction">
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="SCLC"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="personIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                </predicate>
+              </predicate>
+            </expression>
+          </expression>
+        </predicate>
+      </expression>
+    </invariant>
+    <invariant xsi:type="amn-pred:AtomicPredicate" sign=".">
+      <expression xsi:type="amn-exp:UnaryOperator" sign="!">
+        <expression xsi:type="amn-exp:BracketedExpression">
+          <expression xsi:type="amn-exp:Variable" name="patient"/>
+        </expression>
+      </expression>
+      <expression xsi:type="amn-pred:Bracketed">
+        <predicate xsi:type="amn-pred:AtomicPredicate" sign="=>">
+          <expression xsi:type="amn-pred:Conjunction">
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+              <expression xsi:type="amn-exp:Variable" name="patient"/>
+              <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+            </predicate>
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+              <expression xsi:type="amn-pred:AtomicPredicate" sign="'">
+                <expression xsi:type="amn-exp:Variable" name="patient"/>
+                <expression xsi:type="amn-exp:Variable" name="stage"/>
+              </expression>
+              <expression xsi:type="amn-exp:Variable" name="4"/>
+            </predicate>
+            <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+              <expression xsi:type="amn-pred:AtomicPredicate" sign="'">
+                <expression xsi:type="amn-exp:Variable" name="patient"/>
+                <expression xsi:type="amn-exp:Variable" name="type"/>
+              </expression>
+              <expression xsi:type="amn-exp:Variable" name="false"/>
+            </predicate>
+          </expression>
+          <expression xsi:type="amn-pred:AtomicPredicate" sign=".">
+            <expression xsi:type="amn-exp:FunctionalExpression" sign="#">
+              <expression xsi:type="amn-exp:BinaryOperator" sign="," noBracket="true">
+                <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+              </expression>
+            </expression>
+            <expression xsi:type="amn-pred:Bracketed">
+              <predicate xsi:type="amn-pred:Conjunction">
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="ICEXT">
+                    <expression xsi:type="amn-exp:Variable" name="NSCLC"/>
+                  </expression>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IS_IR">
+                    <expression xsi:type="amn-exp:FunctionalExpression" sign="personIRI">
+                      <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                    </expression>
+                  </expression>
+                  <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                </predicate>
+                <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                  <expression xsi:type="amn-exp:BinaryOperator" sign="|->">
+                    <expression xsi:type="amn-exp:Variable" name="neoplasmInd"/>
+                    <expression xsi:type="amn-exp:Variable" name="patient'patientid"/>
+                  </expression>
+                  <expression xsi:type="amn-exp:FunctionalExpression" sign="IEXT_hasStage_Range">
+                    <expression xsi:type="amn-exp:Variable" name="hasStage"/>
+                  </expression>
+                </predicate>
+              </predicate>
+            </expression>
+          </expression>
+        </predicate>
+      </expression>
+    </invariant>
+    <initialization xsi:type="amn-pred:AtomicPredicate" sign=":=">
+      <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+      <expression xsi:type="amn-exp:Variable" name="{}"/>
+    </initialization>
+    <operations name="patientsWithTumorOfStageIIIa">
+      <outputParams>res</outputParams>
+      <substitution xsi:type="amn-subst:Block">
+        <substitution xsi:type="amn-subst:BecomesEqual">
+          <leftExpression xsi:type="amn-exp:Variable" name="res"/>
+          <rightExpression xsi:type="amn-exp:SetComprehension">
+            <variable>rcrd</variable>
+            <predicate xsi:type="amn-pred:Conjunction">
+              <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                <expression xsi:type="amn-exp:Variable" name="rcrd"/>
+                <expression xsi:type="amn-exp:StructType">
+                  <element name="name" type="/8"/>
+                </expression>
+              </predicate>
+              <predicate xsi:type="amn-pred:ExistentialPredicate">
+                <predicate xsi:type="amn-pred:Conjunction">
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign=":">
+                    <expression xsi:type="amn-exp:Variable" name="ptnt"/>
+                    <expression xsi:type="amn-exp:Variable" name="tbl_patient"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                    <expression xsi:type="amn-exp:Variable" name="ptnt'stage"/>
+                    <expression xsi:type="amn-exp:Variable" name="4"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                    <expression xsi:type="amn-exp:Variable" name="ptnt'type"/>
+                    <expression xsi:type="amn-exp:Variable" name="false"/>
+                  </predicate>
+                  <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+                    <expression xsi:type="amn-exp:Variable" name="ptnt'name"/>
+                    <expression xsi:type="amn-exp:Variable" name="rcrd'name"/>
+                  </predicate>
+                </predicate>
+                <variable>ptnt</variable>
+              </predicate>
+            </predicate>
+          </rightExpression>
+        </substitution>
+      </substitution>
+    </operations>
     <properties xsi:type="amn-pred:Conjunction">
       <predicate xsi:type="amn-pred:AtomicPredicate" sign="&amp;">
         <expression xsi:type="amn-pred:AtomicPredicate" sign=":">
@@ -38,11 +403,28 @@
           </expression>
         </expression>
       </predicate>
+      <predicate xsi:type="amn-pred:AtomicPredicate" sign="=">
+        <expression xsi:type="amn-exp:BinaryOperator" sign="/\" noBracket="true">
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="ran">
+            <expression xsi:type="amn-exp:Variable" name="personIRI"/>
+          </expression>
+          <expression xsi:type="amn-exp:FunctionalExpression" sign="ran">
+            <expression xsi:type="amn-exp:Variable" name="neoplasmIRI"/>
+          </expression>
+        </expression>
+        <expression xsi:type="amn-exp:Variable" name="{}"/>
+      </predicate>
     </properties>
     <definitions name="STRING_TYPE" type="seq(0..255)"/>
     <abstractConstants>personIRI</abstractConstants>
     <abstractConstants>neoplasmIRI</abstractConstants>
+    <abstractVariables>tbl_patient</abstractVariables>
   </amn:Refinement>
   <amn:AbstractMachine name="ContextRDF"/>
+  <amn-exp:StringValue value="INT"/>
+  <amn-exp:StringValue value="STRING_TYPE"/>
+  <amn-exp:StringValue value="BOOL"/>
+  <amn-exp:StringValue value="INT"/>
+  <amn-exp:Variable name="STRING_TYPE"/>
   <amn:AbstractMachine name="View2AMN"/>
 </xmi:XMI>

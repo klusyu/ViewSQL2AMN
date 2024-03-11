@@ -99,7 +99,7 @@ helper context AMN!Refinement def: toString() : String =
 	'REFINEMENT ' + self.name +
 
 	if not self.refines.oclIsUndefined()
-	then '\n\nREFINES ' + self.refines.name
+	then '\n\nREFINES ' + self.refines
 	else ''
 	endif +
 	

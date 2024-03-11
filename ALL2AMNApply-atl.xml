@@ -3,13 +3,13 @@
 	
 	<target name="default" depends="modelsLoading">
 		
-		<atl.launch path="./transformation/rdf2amn.atl">
+		<atl.launch path="./transformation/ViewSQL2AMN.atl">
 			<inModel name="IN1" model="sql_in" />
 			<inModel name="IN2" model="r2rml_in" />
 			<outModel name="OUT" model="patient.amn" metamodel="AMN" />
 		</atl.launch>
 
-		<atl.saveModel model="hospital.amn" path="./hospital-amn.xmi" />
+		<atl.saveModel model="patient.amn" path="./patient-amn.xmi" />
 		
 		
 		<atl.launch  path="./transformation/AMN2Text.asm">

@@ -2,20 +2,20 @@
 <sQL:Model xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sQL="http://www.xtext.org/example/simple_sql/SQL">
   <statements xsi:type="sQL:CreateTableStatement" tableName="tbl_patient">
     <columns columnName="patientid">
-      <columnType/>
-      <constraints>NOT NULL</constraints>
+      <columnType type="INT"/>
       <constraints>PRIMARY KEY</constraints>
+      <constraints>NOT NULL</constraints>
     </columns>
     <columns columnName="name">
-      <columnType length="40"/>
+      <columnType type="VARCHAR" length="40"/>
       <constraints>NOT NULL</constraints>
     </columns>
     <columns columnName="type">
-      <columnType/>
+      <columnType type="BOOLEAN"/>
       <constraints>NOT NULL</constraints>
     </columns>
     <columns columnName="stage">
-      <columnType/>
+      <columnType type="TINYINT"/>
       <constraints>NOT NULL</constraints>
     </columns>
   </statements>

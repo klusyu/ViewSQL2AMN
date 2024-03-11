@@ -28,7 +28,13 @@ rule createTable2AMN{
 			definitions <- defin,
 			abstractConstants <- 'personIRI',
 			abstractConstants <- 'neoplasmIRI',
-			properties <- thisModule.initProperties(ref.abstractConstants)
+			properties <- thisModule.initProperties(ref.abstractConstants),
+			abstractVariables <- createTable.tableName,
+			invariant <- thisModule.tableDef2Invariant(createTable),
+			invariant <- createTable.columns->select(c|c.constraints->first() = 'PRIMARY KEY')->collect(t|thisModule.primaryKey2Invariant(t)),
+			invariant <- R2RML!TriplesMap.allInstances()->collect(t | thisModule.triplesMap2Invariant(t)),
+			initialization <- init_pred,
+			operations <- thisModule.query2Operation(SQL!SelectStatement.allInstances()->first())
 		),
 		--- REFINES
 		
@@ -38,28 +44,186 @@ rule createTable2AMN{
 		defin: AMN!Definition(
 			name <- 'STRING_TYPE',
 			type <- 'seq(0..255)'
-		)
+		),
 		--- PROPERTIES
 
 		--- INVARIANT
 		
 		--- Initialization
+		init_pred: AMN!AtomicPredicate(
+			sign <- ':=',
+			expression <- Sequence{lv, rv}
+		),
+		lv: AMN!Variable(
+			name <- createTable.tableName
+		),
+		rv: AMN!Variable(
+			name <- '{}'	
+		)
 	do {
 		thisModule.View2AMN(R2RML!Mapping.allInstances()->first());
 		thisModule.debug('CreateTableStatement');
 	}
 }
 
+lazy rule tableDef2Invariant{
+	from
+		st: SQL!CreateTableStatement
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{tblName, pow}
+		),
+		tblName: AMN!Variable(
+			name <- st.tableName	
+		),
+		pow: AMN!FunctionalExpression(
+			sign <- 'POW',
+			expression <- tblStruct
+		),
+		tblStruct: AMN!StructType(
+			element <- st.columns->collect(c | thisModule.column2struct(c))
+		)
+}
+
+lazy rule column2struct{
+	from
+		col: SQL!ColumnDefinition
+	to
+		se: AMN!StructTypeElement(
+			name <- col.columnName,
+			type <- t
+		),
+		t: AMN!StringValue(
+			value <- thisModule.sqlType2AMNType(col.columnType.type)
+		)
+}
+
+lazy rule primaryKey2Invariant{
+	from
+		col: SQL!ColumnDefinition
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- '.',
+			expression <- Sequence{nXY,rightExpBrac}
+		),
+		nXY: AMN!UnaryOperator(
+			sign <- '!',
+			expression <- axy
+		),
+		axy: AMN!BinaryOperator(
+			sign <- ',',
+			expression <- Sequence{xv, yv}
+		),
+		xv: AMN!Variable(
+			name <- 'pt1'	
+		),
+		yv: AMN!Variable(
+			name <- 'pt2'	
+		),
+		rightExpBrac: AMN!Bracketed(
+			predicate <- rightExp
+		),
+		rightExp: AMN!Conjunction(
+			predicate <- Sequence{rxr, ryr, r3456}	
+		),
+		rxr: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{rxx, rxir}
+		),
+		rxx: AMN!Variable(
+			name <- 'pt1'
+		),
+		rxir: AMN!Variable(
+			name <- col.columnName
+		),
+		ryr: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{ryy, ryir}
+		),
+		ryy: AMN!Variable(
+			name <- 'pt2'
+		),
+		ryir: AMN!Variable(
+			name <- col.columnName	
+		),
+		r3456: AMN!AtomicPredicate(
+			sign <- '=>',
+			expression <- Sequence{r34, r56}
+		),
+		r34: AMN!AtomicPredicate(
+			sign <- '/=',
+			expression <- Sequence{r3xx, r3yy}
+		),
+		r3xx: AMN!Variable(
+			name <- 'pt1'	
+		),
+		r3yy: AMN!Variable(
+			name <- 'pt2'	
+		),
+		r56: AMN!AtomicPredicate(
+			sign <- '/=',
+			expression <- Sequence{r5, r6}
+		),
+		r5: AMN!Variable(
+			name <- 'pt1\'patientid'	
+		),
+		r6: AMN!Variable(
+			name <- 'pt2\'patientid'
+		)
+}
+
+helper def: sqlType2AMNType(t: String): String =
+	if t = 'VARCHAR' then
+		'STRING_TYPE'
+	else
+		if t = 'BOOLEAN' then
+			'BOOL'
+		else
+			if t = 'TINYINT' then
+				'INT'
+			else
+				t
+			endif
+		endif
+	endif
+; 
+	
 -- personIRI: 1..NN  >-> IRI & ran(personIRI) <: dom(IS_IR) &
 -- neoplasmIRI: 1..NN >-> IRI & ran(neoplasmIRI) <: dom(IS_IR) &
 -- ran(personIRI) /\ ran(neoplasmIRI) = {}
 rule initProperties(ac: Sequence(String)) {
 	to
 		conjProperties: AMN!Conjunction(
-			predicate <- ac->collect(p|thisModule.propertyDefine(p))
+			predicate <- ac->collect(p|thisModule.propertyDefine(p)),
+			predicate <- ranOper
+		),
+		ranOper: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Sequence{ranBin, ranConst}
+		),
+		ranConst: AMN!Variable(
+			name <- '{}'
+		),
+		ranBin: AMN!BinaryOperator(
+			sign <- '/\\',
+			noBracket <- true,
+			expression <- ac->collect(c|thisModule.propertyRange(c))
 		)
 	do {
 		conjProperties;
+	}
+}
+
+rule propertyRange(property: String) {
+	to
+		fe: AMN!FunctionalExpression(
+			sign <- 'ran',
+			expression <- ranVar
+		),
+		ranVar: AMN!Variable(name <- property)
+	do{
+		fe;	
 	}
 }
 
@@ -137,3 +301,341 @@ rule View2AMN(mapping: R2RML!Mapping){
 		thisModule.debug('View2AMN');
 	}
 }
+
+lazy rule triplesMap2Invariant{
+	from
+		tm: R2RML!TriplesMap
+	using {
+		varName: String = 'patient';
+		sm_value: String = '';
+		om_value: String = '';
+		dtype: String = '';
+		sm: R2RML!SubjectMap = tm.subjectMap;
+		poms: R2RML!PredicateobjectMap = tm.predicateObjectMaps;
+	}
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- '.',
+			expression <- Sequence{leftExp, rightExpBrac}
+		),
+		leftExp: AMN!UnaryOperator(
+			sign <- '!',
+			expression <- ble
+		),
+		ble: AMN!BracketedExpression(
+			expression <- axy
+		),
+		axy: AMN!Variable(
+			name <- varName
+		),
+		rightExpBrac: AMN!Bracketed(
+			predicate <- rightExp
+		),
+		rightExp: AMN!AtomicPredicate(
+			sign <- '=>',
+			expression <- Sequence{thisModule.logicalTable2Invariant(tm.logicalTable), rrExp}
+		),
+		rrExp: AMN!AtomicPredicate(
+			sign <- '.',
+			expression <- Sequence{varList, expConjBracket}
+		),
+		varList: AMN!FunctionalExpression(
+			sign <- '#',
+			expression <- varConj 
+		),
+		varConj: AMN!BinaryOperator(
+			sign <- ',',
+			noBracket <- true
+		),
+		expConjBracket: AMN!Bracketed(
+			predicate <- expConj
+		),
+		expConj: AMN!Conjunction(
+			
+		)
+		
+	do{
+		if (not sm.oclIsUndefined()) {
+			if (not sm.template.oclIsUndefined()) {
+				sm_value <- thisModule.templateId(sm.template.name);
+				varConj.expression <- thisModule.str2Variable(sm_value);
+				expConj.predicate <- thisModule.icext_predicate(sm_value, sm.class.className.name);
+				expConj.predicate <- thisModule.isir_predicate('personIRI', varName, thisModule.extractTemplateVal(sm.template.name), sm_value);
+			}
+		}
+		for (pom in tm.predicateObjectMaps) {
+			if (not pom.objectMap.template.oclIsUndefined()) {
+				om_value <- thisModule.templateId(pom.objectMap.template.name);
+				varConj.expression <- thisModule.str2Variable(om_value);
+				expConj.predicate <- thisModule.icext_predicate(om_value, 'Neoplasm');
+				expConj.predicate <- thisModule.isir_predicate('neoplasmIRI', varName, thisModule.extractTemplateVal(pom.objectMap.template.name), om_value);
+			}
+			else{
+				om_value <- 'patient\'patientid';	
+			}
+			if (not pom.objectMap.column.oclIsUndefined()) {
+				dtype <- pom.objectMap.datatype.dtName.name;
+			}
+			if (not pom.objectMap.constant.oclIsUndefined()) {
+				dtype <- pom.predicate.predicateName.name;
+			}
+			expConj.predicate <- thisModule.iext_predicate(sm_value, om_value, dtype, pom.predicate.predicateName.name);
+		}
+		thisModule.debug('triplesMap2Invariant');	
+	}
+}
+
+-- patientInd: ICEXT(Patient)
+rule icext_predicate(l: String, r: String) {
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{lv, rf}
+		),
+		lv: AMN!Variable(
+			name <- l	
+		),
+		rf: AMN!FunctionalExpression(
+			sign <- 'ICEXT',
+			expression <- rv 
+		),
+		rv: AMN!Variable(
+			name <- r	
+		)
+	do{
+		ap;	
+	}
+}
+-- IS_IR(personIRI(patient'patientid)) = patientInd
+rule isir_predicate(piri: String, varName: String, template: String, val: String){
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Sequence{isir, rv}
+		),
+		isir: AMN!FunctionalExpression(
+			sign <- 'IS_IR',
+			expression <- irif
+		),
+		irif: AMN!FunctionalExpression(
+			sign <- piri,
+			expression <- la 
+		),
+		la: AMN!Variable(
+			name <- varName + '\'' + template 	
+		),
+		rv: AMN!Variable(
+			name <- val	
+		)
+	do{
+		ap;	
+	}
+}
+-- (patientInd |-> patient'name): IEXT_String_Range(hasName)
+-- (patientInd |-> neoplasmInd): IEXT(hasNeoplasm)
+-- (neoplasmInd |-> stageIIIa): IEXT_CancerStage_Range(hasStage)
+rule iext_predicate(val: String, rval: String, range: String, pred: String) {
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{bin, iext}
+		),
+		bin: AMN!BinaryOperator(
+			sign <- '|->',
+			expression <- Sequence{lv, rv}
+		),
+		lv: AMN!Variable(
+			name <- val
+		),
+		rv: AMN!Variable(
+			name <- rval
+		),
+		iext: AMN!FunctionalExpression(
+			sign <- 'IEXT' + if range = '' then '' else '_'+range+'_Range' endif,
+			expression <- pv
+		),
+		pv: AMN!Variable(
+			name <- pred	
+		)
+	do {
+		ap;	
+	}
+}
+
+rule str2Variable(s: String) {
+	to 
+		v: AMN!Variable(
+			name <- s	
+		)
+	do {
+		v;	
+	}
+}
+
+lazy rule logicalTable2Invariant{
+	from
+		lt: R2RML!LogicalTable
+	to
+		conj: AMN!Conjunction(
+			predicate <- tblName
+		),
+		tblName: AMN!AtomicPredicate(
+			sign <- ':',
+			expression <- Sequence{tnl, tnr}
+		),
+		tnl: AMN!Variable(
+			name <- 'patient'	
+		),
+		tnr: AMN!Variable(
+			name <- lt.query.tableName	
+		)
+	do{ 
+		-- predicate <- lt.query->select(q|not q.whereClause.oclIsUndefined()).conditions->collect(con|thisModule.condition2Define('patient', con))
+		if (not lt.query.whereClause.oclIsUndefined()) {
+			for (con in lt.query.whereClause.conditions) {
+				 conj.predicate <- thisModule.condition2Define('patient', con);
+			}
+		}
+	}
+}
+
+rule condition2Define(vn:String, con: R2RML!Condition){
+	to
+		ap: AMN!AtomicPredicate(
+			sign <- con.operator,
+			expression <- Sequence{leftExp, rightVar}
+		),
+		leftExp: AMN!AtomicPredicate(
+			sign <- '\'',
+			expression <- Sequence{lep, letype}
+		),
+		lep: AMN!Variable(
+			name <- vn
+		),
+		letype: AMN!Variable(
+			name <- con.column
+		),
+		rightVar: AMN!Variable(
+			name <- con.value.value	
+		)
+	do {
+		ap;	
+	}
+}
+
+
+lazy rule query2Operation{
+	from select: SQL!SelectStatement
+	using {
+		res : String = 'res';
+		ptnt: String = 'ptnt';
+	}
+	to oper: AMN!Operation(
+		name <- 'patientsWithTumorOfStageIIIa', --- TODO: How to get such name?
+		outputParams <- res,
+		substitution <-block
+	),
+	block: AMN!Block(
+		substitution <- equal
+	),
+	equal : AMN!BecomesEqual(
+		leftExpression <- leftExp,
+		rightExpression <- rightExp
+	),
+	leftExp: AMN!Variable(
+		name <- res
+	),
+	rightExp: AMN!SetComprehension(
+		variable <- 'rcrd',
+		predicate <- ap
+	),
+	ap: AMN!Conjunction(
+		predicate <- Sequence{stap, estPred}
+	),
+	stap: AMN!AtomicPredicate(
+		sign <- ':',
+		expression <- Sequence{stapvar, st}
+	),
+	stapvar: AMN!Variable(
+		name <- 'rcrd'
+	),
+	st: AMN!StructType(
+		element <- select.selectedColumns.columns->collect(c | thisModule.str2StructElement(c))
+	),
+	estPred: AMN!ExistentialPredicate(
+		variable <- ptnt,
+		predicate <- estConj
+	),
+	estConj: AMN!Conjunction(
+		predicate <- tblDef,
+		predicate <- thisModule.where2Define(ptnt, select.whereClause.expression.left),
+		predicate <- thisModule.where2Define(ptnt, select.whereClause.expression.right),
+		predicate <- rc
+	),
+	tblDef: AMN!AtomicPredicate(
+		sign <- ':',
+		expression <- Sequence{tblleft,tblright}
+	),
+	tblleft: AMN!Variable(
+		name <- ptnt
+	),
+	tblright: AMN!Variable(
+		name <- select.tableName
+	),
+	rc: AMN!AtomicPredicate(
+		sign <- '=',
+		expression <- Sequence{rcl,rcr}
+	),
+	rcl: AMN!Variable(
+		name <- ptnt + '\'name'
+	),
+	rcr: AMN!Variable(
+		name <- 'rcrd\'name'
+	)
+	do{
+	
+	}
+}
+
+rule where2Define(ptnt:String, com: SQL!Comparison) {
+	to
+		rc: AMN!AtomicPredicate(
+			sign <- '=',
+			expression <- Sequence{rcl,rcr}
+		),
+		rcl: AMN!Variable(
+			name <- ptnt + '\'' + com.column
+		),
+		rcr: AMN!Variable(
+			name <- com.value.value.toString()
+		)
+	do{
+		rc;
+	}
+}
+
+rule str2StructElement(col: String) {
+	to
+		ste: AMN!StructTypeElement(
+			name <- col,
+			type <- t
+		),
+		t: AMN!Variable(
+			name <- 'STRING_TYPE'	
+		)
+	do{
+		ste;	
+	}
+}
+
+helper def: templateId(t: String): String =
+	if t.indexOf('neoplasm') < 0 then
+		'patientInd'
+	else
+		'neoplasmInd'
+	endif
+; 
+
+helper def: extractTemplateVal(t: String): String =
+	t.substring(t.indexOf('{')+2, t.indexOf('}'))
+; 
